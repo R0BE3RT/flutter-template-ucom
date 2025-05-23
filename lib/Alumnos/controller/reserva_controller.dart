@@ -1,6 +1,6 @@
-import 'package:finpay/model/sitema_reservas.dart';
 import 'package:get/get.dart';
 import 'package:finpay/api/local.db.service.dart';
+import 'package:finpay/Alumnos/model/sistema_reservas.dart';
 
 class ReservaController extends GetxController {
   RxList<Piso> pisos = <Piso>[].obs;
@@ -13,8 +13,8 @@ class ReservaController extends GetxController {
   final db = LocalDBService();
   RxList<Auto> autosCliente = <Auto>[].obs;
   Rx<Auto?> autoSeleccionado = Rx<Auto?>(null);
-  String codigoClienteActual =
-      'cliente_1'; // ← este puede venir de login o contexto
+  String codigoClienteActual = 'cliente_1'; // ← este puede venir de login o contexto
+
   @override
   void onInit() {
     super.onInit();
@@ -131,4 +131,4 @@ class ReservaController extends GetxController {
     resetearCampos();
     super.onClose();
   }
-}
+} 

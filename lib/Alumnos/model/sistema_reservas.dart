@@ -37,12 +37,13 @@ class Auto {
   String chasis;
   String clienteId;
 
-  Auto(
-      {required this.chapa,
-      required this.marca,
-      required this.modelo,
-      required this.chasis,
-      required this.clienteId});
+  Auto({
+    required this.chapa,
+    required this.marca,
+    required this.modelo,
+    required this.chasis,
+    required this.clienteId,
+  });
 
   factory Auto.fromJson(Map<String, dynamic> json) => Auto(
         chapa: json['chapa'],
@@ -57,7 +58,7 @@ class Auto {
         'marca': marca,
         'modelo': modelo,
         'chasis': chasis,
-        'clienteId': clienteId
+        'clienteId': clienteId,
       };
 }
 
@@ -75,8 +76,7 @@ class Piso {
   factory Piso.fromJson(Map<String, dynamic> json) => Piso(
         codigo: json['codigo'],
         descripcion: json['descripcion'],
-        lugares:
-            (json['lugares'] as List).map((l) => Lugar.fromJson(l)).toList(),
+        lugares: (json['lugares'] as List).map((l) => Lugar.fromJson(l)).toList(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -176,4 +176,4 @@ class Pago {
         'montoPagado': montoPagado,
         'fechaPago': fechaPago.toIso8601String(),
       };
-}
+} 
