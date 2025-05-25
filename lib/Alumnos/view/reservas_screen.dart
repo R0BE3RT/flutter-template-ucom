@@ -38,20 +38,41 @@ class ReservaScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey.shade300),
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(12),
+                        color: Colors.white,
                       ),
                       child: Obx(() {
                         return DropdownButton<Auto>(
                           isExpanded: true,
                           value: controller.autoSeleccionado.value,
-                          hint: const Text("Seleccionar auto"),
+                          hint: Row(
+                            children: [
+                              Icon(Icons.directions_car, color: Theme.of(context).colorScheme.primary),
+                              const SizedBox(width: 8),
+                              const Text("Seleccionar auto"),
+                            ],
+                          ),
                           underline: const SizedBox(),
                           onChanged: (auto) {
                             controller.autoSeleccionado.value = auto;
                           },
                           items: controller.autosCliente.map((a) {
                             final nombre = "${a.chapa} - ${a.marca} ${a.modelo}";
-                            return DropdownMenuItem(value: a, child: Text(nombre));
+                            return DropdownMenuItem(
+                              value: a,
+                              child: Row(
+                                children: [
+                                  Icon(Icons.directions_car, color: Theme.of(context).colorScheme.primary),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      nombre,
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
                           }).toList(),
                         );
                       }),
