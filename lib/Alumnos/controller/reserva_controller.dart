@@ -29,7 +29,8 @@ class ReservaController extends GetxController {
     final rawReservas = await db.getAll("reservas.json");
 
     final reservas = rawReservas.map((e) => Reserva.fromJson(e)).toList();
-    final lugaresReservados = reservas.map((r) => r.codigoReserva).toSet();
+    final reservasPendientes = reservas.where((r) => r.estadoReserva == "PENDIENTE").toList();
+    final lugaresReservados = reservasPendientes.map((r) => r.codigoReserva).toSet();
 
     final todosLugares = rawLugares.map((e) => Lugar.fromJson(e)).toList();
 
@@ -48,7 +49,7 @@ class ReservaController extends GetxController {
 
     // Inicializar lugares disponibles (solo los no reservados)
     lugaresDisponibles.value = todosLugares.where((l) {
-      return !lugaresReservados.contains(l.codigoLugar);
+      return l.estado == "DISPONIBLE" && !lugaresReservados.contains(l.codigoLugar);
     }).toList();
   }
 
@@ -90,7 +91,9 @@ class ReservaController extends GetxController {
     try {
       // Guardar la reserva
       final reservas = await db.getAll("reservas.json");
-      reservas.add(nuevaReserva.toJson());
+      final reservaJson = nuevaReserva.toJson();
+      reservaJson['codigoLugar'] = lugarSeleccionado.value!.codigoLugar;
+      reservas.add(reservaJson);
       await db.saveAll("reservas.json", reservas);
 
       // Marcar el lugar como reservado
@@ -102,6 +105,9 @@ class ReservaController extends GetxController {
         lugares[index]['estado'] = "RESERVADO";
         await db.saveAll("lugares.json", lugares);
       }
+
+      // Actualizar la lista de lugares disponibles
+      await cargarPisosYLugares();
 
       return true;
     } catch (e) {
@@ -124,6 +130,43 @@ class ReservaController extends GetxController {
 
     autosCliente.value =
         autos.where((a) => a.clienteId == codigoClienteActual).toList();
+  }
+
+  Future<bool> cancelarReserva(String codigoReserva) async {
+    try {
+      // Actualizar estado de la reserva
+      final reservas = await db.getAll("reservas.json");
+      final index = reservas.indexWhere(
+        (r) => r['codigoReserva'] == codigoReserva,
+      );
+      
+      if (index != -1) {
+        // Obtener el código del lugar antes de eliminar la reserva
+        final codigoLugar = reservas[index]['codigoLugar'];
+        
+        // Eliminar la reserva
+        reservas.removeAt(index);
+        await db.saveAll("reservas.json", reservas);
+
+        // Liberar el lugar de estacionamiento
+        final lugares = await db.getAll("lugares.json");
+        final lugarIndex = lugares.indexWhere(
+          (l) => l['codigoLugar'] == codigoLugar,
+        );
+        if (lugarIndex != -1) {
+          lugares[lugarIndex]['estado'] = "DISPONIBLE";
+          await db.saveAll("lugares.json", lugares);
+        }
+
+        // Actualizar la lista de lugares disponibles
+        await cargarPisosYLugares();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print("Error al cancelar reserva: $e");
+      return false;
+    }
   }
 
   @override
