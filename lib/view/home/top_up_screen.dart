@@ -8,6 +8,7 @@ import 'package:finpay/Alumnos/model/sistema_reservas.dart';
 import 'package:finpay/api/local.db.service.dart';
 import 'package:finpay/utils/utiles.dart';
 import 'package:finpay/Alumnos/controller/reserva_controller.dart';
+import 'package:finpay/controller/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -89,47 +90,52 @@ class _TopUpSCreenState extends State<TopUpSCreen> {
 
         // Actualizar la lista de reservas pendientes
         await cargarReservasPendientes();
-      }
 
-      // Mostrar confirmación
-      Get.dialog(
-        AlertDialog(
-          title: Row(
-            children: [
-              Icon(Icons.check_circle, color: Colors.green, size: 28),
-              SizedBox(width: 8),
-              Text("Pago Exitoso"),
-            ],
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Reserva: ${reservaSeleccionada.value!.codigoReserva}"),
-              Text("Monto: ₲${UtilesApp.formatearGuaranies(reservaSeleccionada.value!.monto)}"),
-              Text("Fecha: ${UtilesApp.formatearFechaDdMMAaaa(DateTime.now())}"),
-              Text("Lugar liberado exitosamente", style: TextStyle(color: Colors.green)),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Get.back();
-                Get.back();
-                // Recargar la pantalla de reservas para actualizar el estado de los lugares
-                Get.find<ReservaController>().cargarPisosYLugares();
-              },
-              child: Text(
-                "Aceptar",
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.bold,
+        // Actualizar el resumen en HomeController
+        final homeController = Get.find<HomeController>();
+        await homeController.actualizarPagos();
+        await homeController.actualizarAutos();
+
+        // Mostrar confirmación
+        Get.dialog(
+          AlertDialog(
+            title: Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.green, size: 28),
+                SizedBox(width: 8),
+                Text("Pago Exitoso"),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Reserva: ${reservaSeleccionada.value!.codigoReserva}"),
+                Text("Monto: ₲${UtilesApp.formatearGuaranies(reservaSeleccionada.value!.monto)}"),
+                Text("Fecha: ${UtilesApp.formatearFechaDdMMAaaa(DateTime.now())}"),
+                Text("Lugar liberado exitosamente", style: TextStyle(color: Colors.green)),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Get.back();
+                  Get.back();
+                  // Recargar la pantalla de reservas para actualizar el estado de los lugares
+                  Get.find<ReservaController>().cargarPisosYLugares();
+                },
+                child: Text(
+                  "Aceptar",
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-      );
+            ],
+          ),
+        );
+      }
     } catch (e) {
       Get.snackbar(
         "Error",

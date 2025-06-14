@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:finpay/api/local.db.service.dart';
 import 'package:finpay/Alumnos/model/sistema_reservas.dart';
+import 'package:finpay/controller/home_controller.dart';
 
 class ReservaController extends GetxController {
   RxList<Piso> pisos = <Piso>[].obs;
@@ -109,6 +110,11 @@ class ReservaController extends GetxController {
       // Actualizar la lista de lugares disponibles
       await cargarPisosYLugares();
 
+      // Actualizar el resumen en HomeController
+      final homeController = Get.find<HomeController>();
+      await homeController.actualizarPagos();
+      await homeController.actualizarAutos();
+
       return true;
     } catch (e) {
       print("Error al guardar reserva: $e");
@@ -160,6 +166,12 @@ class ReservaController extends GetxController {
 
         // Actualizar la lista de lugares disponibles
         await cargarPisosYLugares();
+
+        // Actualizar el resumen en HomeController
+        final homeController = Get.find<HomeController>();
+        await homeController.actualizarPagos();
+        await homeController.actualizarAutos();
+
         return true;
       }
       return false;

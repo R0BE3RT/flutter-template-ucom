@@ -309,10 +309,111 @@ class HomeView extends StatelessWidget {
                       ],
                     ),
                   ),
-                )
+                ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.only(left: 20, right: 20),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppTheme.isLightTheme == false
+                          ? const Color(0xff211F32)
+                          : const Color(0xffFFFFFF),
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xff000000).withOpacity(0.10),
+                          blurRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Resumen del Mes",
+                            style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              _buildSummaryCard(
+                                context,
+                                "Pagos Realizados",
+                                homeController.pagosRealizadosMes.toString(),
+                                Icons.payments_outlined,
+                                Colors.green,
+                              ),
+                              _buildSummaryCard(
+                                context,
+                                "Pagos Pendientes",
+                                homeController.pagosPendientes.toString(),
+                                Icons.pending_actions_outlined,
+                                Colors.orange,
+                              ),
+                              _buildSummaryCard(
+                                context,
+                                "Autos Registrados",
+                                homeController.cantidadAutos.toString(),
+                                Icons.directions_car_outlined,
+                                Colors.blue,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
               ],
             ),
           )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSummaryCard(
+    BuildContext context,
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
+    return Container(
+      width: (Get.width - 60) / 3,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 24),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: Theme.of(context).textTheme.titleLarge!.copyWith(
+              color: color,
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+              color: Theme.of(context).textTheme.bodySmall!.color,
+              fontSize: 12,
+            ),
+            textAlign: TextAlign.center,
+          ),
         ],
       ),
     );
